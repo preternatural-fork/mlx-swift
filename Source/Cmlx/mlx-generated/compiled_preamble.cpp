@@ -1,9 +1,9 @@
 const char* get_kernel_preamble() {
 return R"preamble(
 #include <cmath>
-  #include <complex>
-  #include <cstdint>
-  #include <vector>
+#include <complex>
+#include <cstdint>
+#include <vector>
 # 1 "Source/Cmlx/mlx/mlx/backend/common/compiled_preamble.h"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
@@ -798,7 +798,12 @@ struct Equal {
 struct NaNEqual {
   template <typename T>
   bool operator()(T x, T y) {
-    return x == y || (std::isnan(x) && std::isnan(y));
+    if constexpr (std::is_integral_v<T>) {
+
+      return x == y;
+    } else {
+      return x == y || (std::isnan(x) && std::isnan(y));
+    }
   }
 };
 
