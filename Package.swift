@@ -201,7 +201,7 @@ let package = Package(
         ),
 
     ],
-    cxxLanguageStandard: .gnucxx17
+    cxxLanguageStandard: .cxx20
 )
 
 if Context.environment["MLX_SWIFT_BUILD_DOC"] == "1"
