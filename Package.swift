@@ -1,20 +1,15 @@
-// swift-tools-version: 5.9
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-// Copyright © 2024 Apple Inc.
+// swift-tools-version: 5.10
 
 import PackageDescription
 
 let package = Package(
     name: "mlx-swift",
-
     platforms: [
         .macOS("13.3"),
         .iOS(.v16),
         .visionOS(.v1),
     ],
-
     products: [
-        // main targets
         .library(name: "MLX", targets: ["MLX"]),
         .library(name: "MLXRandom", targets: ["MLXRandom"]),
         .library(name: "MLXNN", targets: ["MLXNN"]),
@@ -24,7 +19,6 @@ let package = Package(
         .library(name: "MLXFast", targets: ["MLXFast"]),
     ],
     dependencies: [
-        // for Complex type
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0")
     ],
     targets: [
