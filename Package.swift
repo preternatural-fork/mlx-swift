@@ -93,6 +93,7 @@ let package = Package(
             cSettings: [
                 .headerSearchPath("mlx"),
                 .headerSearchPath("include/mlx-c"),
+                .unsafeFlags(["-w"]),
             ],
 
             cxxSettings: [
