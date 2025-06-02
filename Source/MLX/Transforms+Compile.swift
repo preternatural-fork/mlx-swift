@@ -9,6 +9,8 @@ final class CompiledFunction: @unchecked (Sendable) {
     /// unique (for the lifetime of the object) identifier for the compiled function
     private var id: UInt!
 
+    let lock = NSLock()
+
     /// the function to compile
     let f: ([MLXArray]) -> [MLXArray]
 
@@ -35,6 +37,12 @@ final class CompiledFunction: @unchecked (Sendable) {
     }
 
     func call(_ arguments: [MLXArray]) -> [MLXArray] {
+        lock.withLock {
+            innerCall(arguments)
+        }
+    }
+
+    func innerCall(_ arguments: [MLXArray]) -> [MLXArray] {
         let stateInputs = inputs.flatMap { $0.innerState() }
         let argumentsCount = arguments.count
 
@@ -54,7 +62,7 @@ final class CompiledFunction: @unchecked (Sendable) {
 
             // replace the inner state with the tracers
             for (s, tracer) in zip(stateInputs, tracers[argumentsCount...]) {
-                s.update(tracer)
+                s._updateInternal(tracer)
             }
 
             // call the function with the tracer arguments
@@ -66,7 +74,7 @@ final class CompiledFunction: @unchecked (Sendable) {
 
             // put the original values back in the state
             for (s, saved) in zip(stateInputs, savedStateInputs) {
-                s.update(saved)
+                s._updateInternal(saved)
             }
 
             // return the result of the function and the state
@@ -98,7 +106,7 @@ final class CompiledFunction: @unchecked (Sendable) {
         let stateOutput = outputs.flatMap { $0.innerState() }
 
         for (s, newValues) in zip(stateOutput, resultsPlusStateOutput.suffix(stateOutput.count)) {
-            s.update(newValues)
+            s._updateInternal(newValues)
         }
 
         let resultLength = resultsPlusStateOutput.count - stateOutput.count
